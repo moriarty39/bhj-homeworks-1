@@ -1,37 +1,54 @@
-const products = document.querySelector('.products')
-const cartProducts = document.querySelector('.cart__products');
+"use strict";
 
+const basket = document.querySelector(".cart__products");
+const products = document.querySelector(".products");
 
-products.addEventListener('click', event =>{
+products.addEventListener("click", (event) => {
+  event.preventDefault();
 
-    let quantity = event.target.parentElement.querySelector('.product__quantity-value')
-    if (event.target.classList.contains('product__quantity-control_dec') && quantity.innerText > 1){
-        quantity.innerText--;
-        //quantity.innerText = quantity.innerText - 1
+  if (event.target.classList.contains("product__quantity-control")) {
+    let quantity = event.target
+      .closest(".product__quantity-controls")
+      .querySelector(".product__quantity-value");
+    if (event.target.classList.contains("product__quantity-control_inc")) {
+      quantity.textContent++;
+    } else if (
+      event.target.classList.contains("product__quantity-control_dec")
+    ) {
+      quantity.textContent--;
+      if (quantity.textContent < 1) {
+        quantity.textContent = 1;
+      }
     }
-    if (event.target.classList.contains('product__quantity-control_inc')){
-        quantity.innerText++;
-    }
-    function findInArray(element) {
-        element.innerText === quantity.innerText;
-    }
-    if(event.target.classList.contains('product__add')){
-        console.log(Array.from(document.querySelectorAll('.cart__product')))
+  }
 
-        function findInArray(element) {
-            console.log('id array element', element.dataset.id)
-            console.log('id select element', event.target.closest('.product').dataset.id)
-            element.dataset.id === event.target.closest('.product').dataset.id;
-        }
-        
+  if (event.target.classList.contains("product__add")) {
+    let id = event.target.closest(".product").dataset.id;
+    let product = event.target
+      .closest(".product")
+      .querySelector(".product__quantity-value").textContent;
+    let image = event.target
+      .closest(".product")
+      .querySelector(".product__image")
+      .getAttribute("src");
 
-        let result = Array.from(document.querySelectorAll('.cart__product')).find(findInArray)
-        cartProducts.innerHTML += 
-        `<div class="cart__product" data-id=${event.target.closest('.product').dataset.id}>
-            <img class="cart__product-image" src=${event.target.closest('.product').firstElementChild.nextElementSibling.getAttribute('src')}>
-            <div class="cart__product-count">${quantity.innerText}</div>
-        </div>`
+    if (
+      basket.children.length !== 0 &&
+      basket.querySelector(`[data-id="${id}"]`)
+    ) {
+      basket
+        .querySelector(`[data-id="${id}"]`)
+        .querySelector(".cart__product-count").textContent =
+        Number(
+          basket
+            .querySelector(`[data-id="${id}"]`)
+            .querySelector(".cart__product-count").textContent
+        ) + Number(product);
+    } else {
+      basket.innerHTML += `<div class="cart__product" data-id="${id}">
+       <img class="cart__product-image" src="${image}">
+       <div class="cart__product-count">${product}</div>
+       </div>`;
     }
-
-    
-})
+  }
+});
